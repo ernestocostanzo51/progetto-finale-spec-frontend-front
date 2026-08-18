@@ -1,10 +1,10 @@
 import { createContext, useState, useEffect } from "react"
 
-const GamesContext = createContext()
+export const GamesContext = createContext()
 
 
 
-export default function ProductsProvider({ childern }){
+export default function ProductsProvider({ children }){
 
     const [games , setGames] = useState([])
 
@@ -30,17 +30,18 @@ export default function ProductsProvider({ childern }){
     }
 }
 
+useEffect(() => {
+    FetchGames()
+} , [])
+
 return(
-    <GamesContext.Provider value={
+    <GamesContext.Provider value={{
         games,
         setGames,
         FetchGames
-    }
-    ></GamesContext.Provider>
+    }}
+    >{children}</GamesContext.Provider>
 )
     
-       
-    
 
-    
 }

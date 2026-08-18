@@ -4,6 +4,7 @@ import DetailsPage from "./pages/DetailsPage"
 import FavoritePage from "./pages/FavoritePage"
 import ComparePage from "./pages/ComparePage"
 import LayOut from "./layout/LayOut"
+import GameProvider from "./components/GamesProvider"
 
 
 function App() {
@@ -11,7 +12,8 @@ function App() {
 
   return (
     <>
-    <BrowserRouter>
+    <GameProvider>
+      <BrowserRouter>
     <Routes>
       <Route element={<LayOut/>}>
       <Route path="/" element={<HomePage/>}/>
@@ -21,6 +23,8 @@ function App() {
       </Route>
       </Routes>
     </BrowserRouter>
+    </GameProvider>
+    
     </>
   )
 }

@@ -10,7 +10,7 @@ export default function FavoriteProvider({ children }){
     })
 
     useEffect(() => {
-    localStorage.setItem("favoritelist", JSON.stringify(favorites));
+    localStorage.setItem("favoritelist", JSON.stringify(favorite));
   }, [favorite]);
 
 
@@ -18,21 +18,21 @@ export default function FavoriteProvider({ children }){
     const addToFavorite = (game) => {
         
         return setFavorite((prev) => {
-            const exist = favorite.some((item) => item.id === game.id)
-            if(exist){
-                return prev
+            const exist = prev.some((item) => item.id === game.id)
+            if(!exist){
+                return [...prev , game]
             }
             else{
-                return [...prev , game]
+                return prev
             }
         })
     }
 
     const removeTofavorite = (game) => {
-        return setFavorite((prev) => {
-            prev.filter(item => item.id !== game.id)
-        })
+        return setFavorite((prev) => prev.filter((item) => item.id !== game.id))
     }
+
+
 
     const isInFavorite = (game) => {
         return favorite.some((item) => item.id === game.id)

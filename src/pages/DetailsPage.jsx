@@ -13,7 +13,7 @@ export default function DetailsPage() {
   }, [id])
 
   
-  if (!singleGame || !singleGame.title) {
+  if (!singleGame) {
     return (
       <div className="container my-5 text-center">
         <div className="spinner-border text-primary" role="status">

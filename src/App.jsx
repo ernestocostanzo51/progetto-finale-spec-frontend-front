@@ -6,6 +6,7 @@ import ComparePage from "./pages/ComparePage"
 import LayOut from "./layout/LayOut"
 import GameProvider from "./components/GamesProvider"
 import FavoriteProvider from "./components/FavoriteProvider"
+import CompareProvider from "./components/CompareProvider"
 
 
 function App() {
@@ -13,7 +14,8 @@ function App() {
 
   return (
     <>
-    <FavoriteProvider>
+    <CompareProvider>
+<FavoriteProvider>
        <GameProvider>
       <BrowserRouter>
     <Routes>
@@ -27,6 +29,8 @@ function App() {
     </BrowserRouter>
     </GameProvider>
     </FavoriteProvider>
+    </CompareProvider>
+    
    
     
     </>

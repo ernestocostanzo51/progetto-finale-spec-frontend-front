@@ -2,11 +2,12 @@ import { useContext } from "react"
 import { GamesContext } from "../components/GamesProvider"
 import { NavLink } from "react-router-dom"
 import { FavoriteContext } from "../components/FavoriteProvider"
+import { CompareContext } from "../components/CompareProvider"
 
 export default function HomePage() {
   const { games } = useContext(GamesContext)
-  
   const { isInFavorite, addToFavorite, removeTofavorite } = useContext(FavoriteContext)
+  const { isInCompare , addToCompare , removeToCompare} = useContext(CompareContext)
 
   return (
     <div className="container my-4">
@@ -25,6 +26,7 @@ export default function HomePage() {
               {games &&
                 games.map((game) => {
                   const isFav = isInFavorite(game)
+                  const isComp = isInCompare(game)
 
                   return (
                     <tr key={game.id}>
@@ -49,6 +51,23 @@ export default function HomePage() {
                             onClick={() => addToFavorite(game)}
                           >
                             🤍
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        {isComp ? (
+                          <button
+                            className="btn btn-warning btn-sm"
+                            onClick={() => removeToCompare(game)}
+                          >
+                             Rimuovi
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-outline-warning btn-sm text-dark"
+                            onClick={() => addToCompare(game)}
+                          >
+                             Confronta
                           </button>
                         )}
                       </td>

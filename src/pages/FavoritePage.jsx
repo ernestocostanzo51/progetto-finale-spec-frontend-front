@@ -11,7 +11,7 @@ export default function FavoritePage() {
         <div className="row text-center my-5">
           <div className="col">
             <p className="fs-4 text-muted">Non ci sta niente nei preferiti</p>
-            <NavLink to="/" className="btn btn-primary mt-2">
+            <NavLink to="/" className="btn btn-secondary mt-2">
               Torna alla Home
             </NavLink>
           </div>

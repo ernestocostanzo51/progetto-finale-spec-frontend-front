@@ -1,18 +1,83 @@
-import { useContext } from "react"
+import { useContext, useState, useEffect } from "react"
 import { NavLink } from "react-router-dom"
 import { CompareContext } from "../components/CompareProvider"
 
 export default function ComparePage() {
   const { compare, removeToCompare, clearCompare } = useContext(CompareContext)
 
-  // Mostra la schermata "VUOTO" solo se non c'è NESSUN gioco (length === 0)
-  if (!compare || compare.length === 0) {
+  
+  const [details, setDetails] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    
+    if (!compare || compare.length === 0) {
+      setDetails([])
+      return
+    }
+
+    const fetchDetails = async () => {
+      setLoading(true)
+      setError(null)
+
+      try {
+        const promises = compare.map((item) =>
+          fetch(`http://localhost:3001/products/${item.id || item}`)
+            .then((res) => {
+              if (!res.ok) throw new Error("Errore nel recupero dati")
+              return res.json()
+            })
+            .then((json) => {
+              if (json.data) return json.data
+              if (json.product) return json.product
+              if (Array.isArray(json)) return json[0]
+              return json
+            })
+        )
+
+        const results = await Promise.all(promises)
+
+        setDetails(results)
+      } catch (err) {
+        console.error("Errore durante la chiamata API:", err)
+        setError("Impossibile caricare le specifiche dei giochi.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDetails()
+  }, [compare])
+
+  
+  if (loading) {
+    return (
+      <div className="container my-5 text-center">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-2">Caricamento dettagli in corso...</p>
+      </div>
+    )
+  }
+
+
+  if (error) {
+    return (
+      <div className="container my-5 text-center text-danger">
+        <h4>{error}</h4>
+        <button className="btn btn-outline-primary mt-3" onClick={() => window.location.reload()}>
+          Riprova
+        </button>
+      </div>
+    )
+  }
+
+ 
+  if (!details || details.length === 0) {
     return (
       <div className="container my-5 text-center">
         <h2>Confronto Giochi ⚔️</h2>
-        <p className="fs-5 text-muted mt-3">
-          Non hai aggiunto alcun gioco al confronto.
-        </p>
+        <p className="fs-5 text-muted mt-3">Non hai aggiunto alcun gioco al confronto.</p>
         <NavLink to="/" className="btn btn-primary mt-2">
           Torna alla Home per aggiungere giochi
         </NavLink>
@@ -20,9 +85,25 @@ export default function ComparePage() {
     )
   }
 
-  // Prendi il primo gioco e (se esiste) il secondo gioco
-  const game1 = compare[0]
-  const game2 = compare[1] || null
+  
+  const game1 = details[0]
+  const game2 = details[1] || null
+
+
+  const getIndicator = (val1, val2, higherIsBetter = true) => {
+    if (!game2 || val1 === undefined || val2 === undefined || val1 === val2) {
+      return { icon1: null, icon2: null }
+    }
+    const isVal1Better = higherIsBetter ? val1 > val2 : val1 < val2
+    return {
+      icon1: isVal1Better ? <span className="text-success fw-bold ms-1">🟢 ⬆️</span> : <span className="text-danger fw-bold ms-1">🔴 ⬇️</span>,
+      icon2: !isVal1Better ? <span className="text-success fw-bold ms-1">🟢 ⬆️</span> : <span className="text-danger fw-bold ms-1">🔴 ⬇️</span>
+    }
+  }
+
+  const priceInd = getIndicator(game1?.price, game2?.price, false)
+  const ratingInd = getIndicator(game1?.rating, game2?.rating, true)
+  const yearInd = getIndicator(game1?.releaseYear || game1?.year, game2?.releaseYear || game2?.year, true)
 
   return (
     <div className="container my-4">
@@ -33,130 +114,67 @@ export default function ComparePage() {
         </button>
       </div>
 
-      {/* Avviso informativo se c'è 1 solo gioco */}
-      {!game2 && (
-        <div className="alert alert-info d-flex justify-content-between align-items-center mb-4">
-          <span>
-            💡 Hai selezionato <strong>1 gioco</strong>. Aggiungine un altro dalla Home per effettuare il confronto affiancato!
-          </span>
-          <NavLink to="/" className="btn btn-sm btn-info text-white">
-            + Aggiungi Secondo Gioco
-          </NavLink>
-        </div>
-      )}
-
       <div className="table-responsive shadow-sm rounded">
         <table className="table table-bordered align-middle text-center mb-0">
           <thead className="table-dark">
             <tr>
               <th style={{ width: "20%" }}>Caratteristica</th>
-              <th>{game1.title}</th>
-              
-              {game2 ? (
-                <th>{game2.title}</th>
-              ) : (
-                <th className="text-muted fw-normal"><i>Slot 2 vuoto</i></th>
-              )}
+              <th>{game1?.title || game1?.name || "Senza Titolo"}</th>
+              <th>{game2 ? (game2?.title || game2?.name || "Senza Titolo") : <i>Slot 2 vuoto</i>}</th>
             </tr>
           </thead>
           <tbody>
-            
+            {/* Copertina */}
             <tr>
               <td className="fw-bold bg-light">Copertina</td>
               <td>
                 <img
-                  src={game1.coverUrl}
-                  alt={game1.title}
+                  src={game1?.coverUrl || game1?.cover || game1?.image || "https://via.placeholder.com/150"}
+                  alt={game1?.title}
                   style={{ maxHeight: "140px", objectFit: "contain" }}
                   className="img-fluid rounded"
                 />
               </td>
-              {game2 ? (
-                <td>
+              <td>
+                {game2 ? (
                   <img
-                    src={game2.coverUrl}
-                    alt={game2.title}
+                    src={game2?.coverUrl || game2?.cover || game2?.image || "https://via.placeholder.com/150"}
+                    alt={game2?.title}
                     style={{ maxHeight: "140px", objectFit: "contain" }}
                     className="img-fluid rounded"
                   />
-                </td>
-              ) : (
-                <td className="text-muted align-middle">—</td>
-              )}
+                ) : (
+                  "—"
+                )}
+              </td>
             </tr>
 
-            
+            {/* Categoria */}
             <tr>
               <td className="fw-bold bg-light">Categoria</td>
-              <td>{game1.category}</td>
-              <td>{game2 ? game2.category : "—"}</td>
+              <td>{game1?.category || "N/D"}</td>
+              <td>{game2 ? (game2?.category || "N/D") : "—"}</td>
             </tr>
 
-           
+            {/* Prezzo */}
             <tr>
               <td className="fw-bold bg-light">Prezzo</td>
-              <td className="fw-bold text-success">{game1.price} €</td>
-              <td className="fw-bold text-success">{game2 ? `${game2.price} €` : "—"}</td>
+              <td className="fw-bold">{game1?.price !== undefined ? `${game1.price} €` : "N/D"} {priceInd.icon1}</td>
+              <td className="fw-bold">{game2 ? (game2?.price !== undefined ? `${game2.price} €` : "N/D") : "—"} {priceInd.icon2}</td>
             </tr>
 
-           
-            <tr>
-              <td className="fw-bold bg-light">Disponibilità</td>
-              <td>
-                {game1.inStock ? (
-                  <span className="badge bg-success">Disponibile</span>
-                ) : (
-                  <span className="badge bg-danger">Esaurito</span>
-                )}
-              </td>
-              <td>
-                {game2 ? (
-                  game2.inStock ? (
-                    <span className="badge bg-success">Disponibile</span>
-                  ) : (
-                    <span className="badge bg-danger">Esaurito</span>
-                  )
-                ) : (
-                  "—"
-                )}
-              </td>
-            </tr>
-
-           
-            <tr>
-              <td className="fw-bold bg-light">Piattaforme</td>
-              <td>
-                {game1.platforms?.map((p) => (
-                  <span key={p} className="badge bg-secondary me-1">
-                    {p}
-                  </span>
-                ))}
-              </td>
-              <td>
-                {game2 ? (
-                  game2.platforms?.map((p) => (
-                    <span key={p} className="badge bg-secondary me-1">
-                      {p}
-                    </span>
-                  ))
-                ) : (
-                  "—"
-                )}
-              </td>
-            </tr>
-
-           
+            {/* Valutazione / PEGI */}
             <tr>
               <td className="fw-bold bg-light">Valutazione / PEGI</td>
               <td>
-                ⭐ {game1.rating} / 5 <br />
-                <span className="badge bg-dark mt-1">PEGI {game1.pegi}</span>
+                ⭐ {game1?.rating ?? "N/D"} / 5 {ratingInd.icon1} <br />
+                <span className="badge bg-dark mt-1">PEGI {game1?.pegi ?? "N/D"}</span>
               </td>
               <td>
                 {game2 ? (
                   <>
-                    ⭐ {game2.rating} / 5 <br />
-                    <span className="badge bg-dark mt-1">PEGI {game2.pegi}</span>
+                    ⭐ {game2?.rating ?? "N/D"} / 5 {ratingInd.icon2} <br />
+                    <span className="badge bg-dark mt-1">PEGI {game2?.pegi ?? "N/D"}</span>
                   </>
                 ) : (
                   "—"
@@ -164,37 +182,24 @@ export default function ComparePage() {
               </td>
             </tr>
 
-           
+            {/* Anno di Uscita */}
             <tr>
               <td className="fw-bold bg-light">Anno di Uscita</td>
-              <td>{game1.releaseYear}</td>
-              <td>{game2 ? game2.releaseYear : "—"}</td>
-            </tr>
-
-            {/* Descrizione */}
-            <tr>
-              <td className="fw-bold bg-light">Descrizione</td>
-              <td className="text-start small">{game1.description}</td>
-              <td className="text-start small">{game2 ? game2.description : "—"}</td>
+              <td>{game1?.releaseYear ?? game1?.year ?? "N/D"} {yearInd.icon1}</td>
+              <td>{game2 ? <>{game2?.releaseYear ?? game2?.year ?? "N/D"} {yearInd.icon2}</> : "—"}</td>
             </tr>
 
             {/* Azioni */}
             <tr>
               <td className="fw-bold bg-light">Azione</td>
               <td>
-                <button
-                  className="btn btn-sm btn-outline-danger"
-                  onClick={() => removeToCompare(game1)}
-                >
+                <button className="btn btn-sm btn-outline-danger" onClick={() => removeToCompare(game1)}>
                   Rimuovi
                 </button>
               </td>
               <td>
                 {game2 ? (
-                  <button
-                    className="btn btn-sm btn-outline-danger"
-                    onClick={() => removeToCompare(game2)}
-                  >
+                  <button className="btn btn-sm btn-outline-danger" onClick={() => removeToCompare(game2)}>
                     Rimuovi
                   </button>
                 ) : (

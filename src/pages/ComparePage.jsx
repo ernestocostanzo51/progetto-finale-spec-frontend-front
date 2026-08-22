@@ -40,7 +40,6 @@ export default function ComparePage() {
 
         setDetails(results)
       } catch (err) {
-        console.error("Errore durante la chiamata API:", err)
         setError("Impossibile caricare le specifiche dei giochi.")
       } finally {
         setLoading(false)

@@ -3,11 +3,14 @@ import { GamesContext } from "../components/GamesProvider"
 import { NavLink } from "react-router-dom"
 import { FavoriteContext } from "../components/FavoriteProvider"
 import { CompareContext } from "../components/CompareProvider"
+import { SearchContext } from "../components/SearchProvider"
 
 export default function HomePage() {
   const { games } = useContext(GamesContext)
   const { isInFavorite, addToFavorite, removeTofavorite } = useContext(FavoriteContext)
   const { isInCompare , addToCompare , removeToCompare} = useContext(CompareContext)
+  const { }
+  
 
   return (
     <div className="container my-4">

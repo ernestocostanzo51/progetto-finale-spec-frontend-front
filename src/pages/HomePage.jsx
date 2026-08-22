@@ -9,10 +9,28 @@ export default function HomePage() {
   const { games } = useContext(GamesContext)
   const { isInFavorite, addToFavorite, removeTofavorite } = useContext(FavoriteContext)
   const { isInCompare , addToCompare , removeToCompare} = useContext(CompareContext)
-  const { }
+  const { searchQuery, setSearchQuery, clearSearch} = useContext(SearchContext)
+
+  const filtredGames = games.filter((game) =>
+  game.title.toLowerCase().startsWith(searchQuery.toLowerCase().trim())
+);
   
 
   return (
+    <>
+    <div className="container">
+      <div className="row">
+        <div className="col">
+          <input 
+          type="text"
+          className="form-control mt-3"
+          placeholder="Cerca..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
     <div className="container my-4">
       <div className="row">
         <div className="col">
@@ -26,8 +44,8 @@ export default function HomePage() {
               </tr>
             </thead>
             <tbody>
-              {games &&
-                games.map((game) => {
+              {filtredGames &&
+                filtredGames.map((game) => {
                   const isFav = isInFavorite(game)
                   const isComp = isInCompare(game)
 
@@ -82,5 +100,7 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+    </>
+    
   )
 }

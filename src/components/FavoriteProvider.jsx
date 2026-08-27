@@ -1,27 +1,24 @@
-import { createContext, useState, useRef } from "react"
+import { createContext, useState, useEffect, useRef } from "react"
 
 export const FavoriteContext = createContext()
 
 export default function FavoriteProvider({ children }) {
-  const [favorite, setFavorite] = useState([])
+  const [favorite, setFavorite] = useState(() => {
+    const saved = localStorage.getItem("favorite")
+    return saved ? JSON.parse(saved) : []
+  })
+
   const [toastMessage, setToastMessage] = useState("")
-  
-  
   const timerRef = useRef(null)
 
-  
+  useEffect(() => {
+    localStorage.setItem("favorite", JSON.stringify(favorite))
+  }, [favorite])
+
   const showToast = (message) => {
-    
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-    }
-
+    if (timerRef.current) clearTimeout(timerRef.current)
     setToastMessage(message)
-
-   
-    timerRef.current = setTimeout(() => {
-      setToastMessage("")
-    }, 2500)
+    timerRef.current = setTimeout(() => setToastMessage(""), 2500)
   }
 
   const isInFavorite = (game) => {
@@ -30,9 +27,10 @@ export default function FavoriteProvider({ children }) {
   }
 
   const addToFavorite = (game) => {
-    if (!game) return
-    if (!isInFavorite(game)) {
-      setFavorite((prev) => [...prev, game])
+    const exist = favorite.find((element) => element.id === game.id)
+
+    if (!exist) {
+      setFavorite([...favorite, game])
       showToast(`"${game.title}" aggiunto ai preferiti! ❤️`)
     }
   }
@@ -47,6 +45,7 @@ export default function FavoriteProvider({ children }) {
     <FavoriteContext.Provider
       value={{
         favorite,
+        favorites: favorite,
         isInFavorite,
         addToFavorite,
         removeTofavorite,

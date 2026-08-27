@@ -4,8 +4,8 @@ export const SortContext = createContext()
 
 export default function SortProvider({ children }) {
   
-  const [sortBy, setSortBy] = useState("title")
-  const [orderdBy , setOrderBy] = useState("")
+  const [sortBy, setSortBy] = useState("all")
+  const [orderBy , setOrderBy] = useState("asc")
 
   
   
@@ -15,7 +15,7 @@ export default function SortProvider({ children }) {
       value={{
         sortBy,
         setSortBy,
-        orderdBy,
+        orderBy,
         setOrderBy
       }}
     >

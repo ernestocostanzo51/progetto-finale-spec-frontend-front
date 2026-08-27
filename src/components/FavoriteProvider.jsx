@@ -8,7 +8,7 @@ export default function FavoriteProvider({ children }) {
     if (!saved) return []
     try {
       const parsed = JSON.parse(saved)
-      // Filtra via eventuali valori null/undefined salvati in precedenza
+    
       return Array.isArray(parsed) ? parsed.filter((item) => item && item.id) : []
     } catch {
       return []
@@ -35,7 +35,7 @@ export default function FavoriteProvider({ children }) {
 
   const addToFavorite = (game) => {
     if (!game || !game.id) return
-    const exist = favorite.find((element) => element && element.id === game.id)
+    const exist = favorite.some((element) =>element.id === game.id)
 
     if (!exist) {
       setFavorite([...favorite, game])

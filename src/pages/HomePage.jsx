@@ -24,38 +24,44 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
 
   const filteredProducts = useMemo(() => {
-    if (!games) return []
+    if (!games || !Array.isArray(games)) return []
+    
+    const cleanQuery = (searchQuery || "").toLowerCase().trim()
+
     return games.filter((game) => {
-      const matchesSearch = (game.title || "")
-        .toLowerCase()
-        .startsWith(searchQuery.toLowerCase().trim())
+      const matchesSearch = cleanQuery === "" || 
+        (game?.title || "").toLowerCase().includes(cleanQuery)
 
       const matchesCategory =
         selectedCategory === "all" ||
-        (game.category || "").toLowerCase() === selectedCategory.toLowerCase()
+        (game?.category || "").toLowerCase() === selectedCategory.toLowerCase()
 
       return matchesSearch && matchesCategory
     })
   }, [games, searchQuery, selectedCategory])
 
+
   const sortedProducts = useMemo(() => {
     return [...filteredProducts].sort((a, b) => {
-      const titleA = a.title 
-      const titleB = b.title 
+      const titleA = (a?.title || "").toLowerCase().trim()
+      const titleB = (b?.title || "").toLowerCase().trim()
 
-      if (orderBy === "asc") {
-        return titleA.localeCompare(titleB)
-      }
-      if (orderBy === "desc") {
-        return titleB.localeCompare(titleA)
-      }
+      const isAscending = orderBy === "asc" || orderBy === "AZ" || orderBy === "ascendente"
+      const isDescending = orderBy === "desc" || orderBy === "ZA" || orderBy === "discendente"
 
+      if (isAscending) {
+        return titleA.localeCompare(titleB, "it", { sensitivity: "base" })
+      } 
+      if (isDescending) {
+        return titleB.localeCompare(titleA, "it", { sensitivity: "base" })
+      }
       return 0
     })
   }, [filteredProducts, orderBy])
 
   return (
     <div className="container my-4">
+    
       <div className="row g-3 mb-4 align-items-end">
         <div className="col-md-5">
           <label htmlFor="search-input" className="form-label fw-bold small text-secondary">
@@ -97,7 +103,7 @@ export default function HomePage() {
           <select
             id="order-by-select"
             className="form-select"
-            value={orderBy}
+            value={orderBy || "asc"}
             onChange={(e) => setOrderBy(e.target.value)}
           >
             <option value="asc">A - Z (Crescente)</option>
@@ -106,6 +112,7 @@ export default function HomePage() {
         </div>
       </div>
 
+  
       <div className="row">
         <div className="col">
           <table className="table table-striped align-middle text-center">

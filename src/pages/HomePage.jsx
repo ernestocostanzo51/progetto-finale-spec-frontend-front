@@ -40,8 +40,8 @@ export default function HomePage() {
 
   const sortedProducts = useMemo(() => {
     return [...filteredProducts].sort((a, b) => {
-      const titleA = a.title || ""
-      const titleB = b.title || ""
+      const titleA = a.title 
+      const titleB = b.title 
 
       if (orderBy === "asc") {
         return titleA.localeCompare(titleB)

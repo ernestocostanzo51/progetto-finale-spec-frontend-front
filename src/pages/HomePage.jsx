@@ -24,7 +24,7 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
 
   const filteredProducts = useMemo(() => {
-    if (!games || !Array.isArray(games)) return []
+  
     
     const cleanQuery = (searchQuery || "").toLowerCase().trim()
 
@@ -43,17 +43,17 @@ export default function HomePage() {
 
   const sortedProducts = useMemo(() => {
     return [...filteredProducts].sort((a, b) => {
-      const titleA = (a?.title || "").toLowerCase().trim()
-      const titleB = (b?.title || "").toLowerCase().trim()
+      const titleA = (a.title).toLowerCase().trim()
+      const titleB = (b.title).toLowerCase().trim()
 
-      const isAscending = orderBy === "asc" || orderBy === "AZ" || orderBy === "ascendente"
-      const isDescending = orderBy === "desc" || orderBy === "ZA" || orderBy === "discendente"
+      const isAscending = orderBy === "asc" 
+      const isDescending = orderBy === "desc" 
 
       if (isAscending) {
-        return titleA.localeCompare(titleB, "it", { sensitivity: "base" })
+        return titleA.localeCompare(titleB)
       } 
       if (isDescending) {
-        return titleB.localeCompare(titleA, "it", { sensitivity: "base" })
+        return titleB.localeCompare(titleA)
       }
       return 0
     })

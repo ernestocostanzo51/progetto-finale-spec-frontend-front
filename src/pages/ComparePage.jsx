@@ -123,7 +123,7 @@ export default function ComparePage() {
             </tr>
           </thead>
           <tbody>
-            {/* Copertina */}
+          
             <tr>
               <td className="fw-bold bg-light">Copertina</td>
               <td>
@@ -148,21 +148,21 @@ export default function ComparePage() {
               </td>
             </tr>
 
-            {/* Categoria */}
+            
             <tr>
               <td className="fw-bold bg-light">Categoria</td>
               <td>{game1?.category || "N/D"}</td>
               <td>{game2 ? (game2?.category || "N/D") : "—"}</td>
             </tr>
 
-            {/* Prezzo */}
+          
             <tr>
               <td className="fw-bold bg-light">Prezzo</td>
               <td className="fw-bold">{game1?.price !== undefined ? `${game1.price} €` : "N/D"} {priceInd.icon1}</td>
               <td className="fw-bold">{game2 ? (game2?.price !== undefined ? `${game2.price} €` : "N/D") : "—"} {priceInd.icon2}</td>
             </tr>
 
-            {/* Valutazione / PEGI */}
+          
             <tr>
               <td className="fw-bold bg-light">Valutazione / PEGI</td>
               <td>
@@ -181,14 +181,14 @@ export default function ComparePage() {
               </td>
             </tr>
 
-            {/* Anno di Uscita */}
+         
             <tr>
               <td className="fw-bold bg-light">Anno di Uscita</td>
               <td>{game1?.releaseYear ?? game1?.year ?? "N/D"} {yearInd.icon1}</td>
               <td>{game2 ? <>{game2?.releaseYear ?? game2?.year ?? "N/D"} {yearInd.icon2}</> : "—"}</td>
             </tr>
 
-            {/* Azioni */}
+           
             <tr>
               <td className="fw-bold bg-light">Azione</td>
               <td>

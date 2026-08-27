@@ -31,7 +31,7 @@ export default function FavoritePage() {
 
       const matchesCategory =
         selectedCategory === "all" ||
-        (favorite.category || "").toLowerCase() === selectedCategory.toLowerCase()
+        favorite.category.toLowerCase() === selectedCategory.toLowerCase()
 
       return matchesSearch && matchesCategory
     })

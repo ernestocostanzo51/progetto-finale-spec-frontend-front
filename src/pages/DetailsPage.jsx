@@ -27,7 +27,7 @@ export default function DetailsPage() {
     )
   }
 
-  // Usa singleGame al posto di game
+ 
   const isFav = isInFavorite(singleGame)
   const isComp = isInCompare(singleGame)
 
@@ -57,7 +57,7 @@ export default function DetailsPage() {
                 ))}
               </div>
 
-              {/* Pulsanti Preferiti e Confronta */}
+              
               <div className="d-flex gap-2">
                 {isFav ? (
                   <button
@@ -74,7 +74,6 @@ export default function DetailsPage() {
                     🤍 Aggiungi ai Preferiti
                   </button>
                 )}
-
                 {isComp ? (
                   <button
                     className="btn btn-warning btn-sm fw-bold"
@@ -93,7 +92,6 @@ export default function DetailsPage() {
                   </button>
                 )}
               </div>
-
             </div>
           </div>
         </div>

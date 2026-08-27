@@ -11,7 +11,7 @@ export default function FavoritePage() {
   const { isInCompare, addToCompare, removeToCompare } = useContext(CompareContext)
   const { sortBy, setSortBy } = useContext(SortContext)
 
-  // 1. FILTRAGGIO (per titolo)
+ 
   const filtredFavorite = useMemo(() => {
     if (!favorite) return []
     return favorite.filter((game) =>
@@ -19,7 +19,7 @@ export default function FavoritePage() {
     )
   }, [favorite, searchQuery])
 
-  // 2. ORDINAMENTO
+  
   const sortedFavorite = useMemo(() => {
     return [...filtredFavorite].sort((a, b) => {
       const titleA = a.title || ""
@@ -37,7 +37,7 @@ export default function FavoritePage() {
 
   return (
     <div className="container my-4">
-      {/* Barra di Ricerca e Select di Ordinamento */}
+     
       <div className="row g-2 mb-4">
         <div className="col-md-8">
           <input
@@ -62,7 +62,7 @@ export default function FavoritePage() {
         </div>
       </div>
 
-      {/* Contenuto Preferiti */}
+     
       {!favorite || favorite.length === 0 ? (
         <div className="row text-center my-5">
           <div className="col">

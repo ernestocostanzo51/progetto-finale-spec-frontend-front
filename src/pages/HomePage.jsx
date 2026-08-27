@@ -156,17 +156,19 @@ export default function HomePage() {
                       <td>
                         {isComp ? (
                           <button
-                            className="btn btn-warning btn-sm"
+                            className="btn btn-warning btn-sm fw-bold px-3"
                             onClick={() => removeToCompare(game)}
+                            title="Rimuovi dal confronto"
                           >
-                            Rimuovi
+                            -
                           </button>
                         ) : (
                           <button
-                            className="btn btn-outline-warning btn-sm text-dark"
+                            className="btn btn-outline-warning btn-sm text-dark fw-bold px-3"
                             onClick={() => addToCompare(game)}
+                            title="Aggiungi al confronto"
                           >
-                            Confronta
+                            +
                           </button>
                         )}
                       </td>

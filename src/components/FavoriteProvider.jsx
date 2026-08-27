@@ -1,52 +1,75 @@
-import { createContext } from "react";
-import { useState, useEffect } from "react";
+import { createContext, useState, useRef } from "react"
 
 export const FavoriteContext = createContext()
-export default function FavoriteProvider({ children }){
 
-    const [favorite, setFavorite] = useState(() => {
-      const saved = localStorage.getItem("favoritelist")
-      return saved ? JSON.parse(saved) : []
-    })
+export default function FavoriteProvider({ children }) {
+  const [favorite, setFavorite] = useState([])
+  const [toastMessage, setToastMessage] = useState("")
+  
+  
+  const timerRef = useRef(null)
 
-    useEffect(() => {
-    localStorage.setItem("favoritelist", JSON.stringify(favorite));
-  }, [favorite]);
-
-
-
-    const addToFavorite = (game) => {
-        
-        return setFavorite((prev) => {
-            const exist = prev.some((item) => item.id === game.id)
-            if(!exist){
-                return [...prev , game]
-            }
-            else{
-                return prev
-            }
-        })
+  
+  const showToast = (message) => {
+    
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
     }
 
-    const removeTofavorite = (game) => {
-        return setFavorite((prev) => prev.filter((item) => item.id !== game.id))
+    setToastMessage(message)
+
+   
+    timerRef.current = setTimeout(() => {
+      setToastMessage("")
+    }, 2500)
+  }
+
+  const isInFavorite = (game) => {
+    if (!game) return false
+    return favorite.some((fav) => fav.id === game.id)
+  }
+
+  const addToFavorite = (game) => {
+    if (!game) return
+    if (!isInFavorite(game)) {
+      setFavorite((prev) => [...prev, game])
+      showToast(`"${game.title}" aggiunto ai preferiti! ❤️`)
     }
+  }
 
+  const removeTofavorite = (game) => {
+    if (!game) return
+    setFavorite((prev) => prev.filter((fav) => fav.id !== game.id))
+    showToast(`"${game.title}" rimosso dai preferiti!`)
+  }
 
+  return (
+    <FavoriteContext.Provider
+      value={{
+        favorite,
+        isInFavorite,
+        addToFavorite,
+        removeTofavorite,
+      }}
+    >
+      {children}
 
-    const isInFavorite = (game) => {
-        return favorite.some((item) => item.id === game.id)
-    }
-
-    return(
-        <FavoriteContext.Provider value={{
-            isInFavorite,
-            addToFavorite,
-            removeTofavorite,
-            favorite,
-            setFavorite
-        }}>
-            {children}
-        </FavoriteContext.Provider>
-    )
+      {toastMessage && (
+        <div
+          className="toast show position-fixed bottom-0 end-0 m-4 text-bg-dark border-0 shadow-lg"
+          style={{ zIndex: 1050, pointerEvents: "none" }}
+        >
+          <div className="d-flex align-items-center justify-content-between p-2">
+            <div className="toast-body fs-6">{toastMessage}</div>
+            <button
+              type="button"
+              className="btn-close btn-close-white me-2"
+              style={{ pointerEvents: "auto" }}
+              onClick={() => setToastMessage("")}
+            ></button>
+          </div>
+        </div>
+      )}
+    </FavoriteContext.Provider>
+  )
 }

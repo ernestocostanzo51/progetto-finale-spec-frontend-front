@@ -75,9 +75,9 @@ export default function ComparePage() {
   if (!details || details.length === 0) {
     return (
       <div className="container my-5 text-center">
-        <h2>Confronto Giochi ⚔️</h2>
+        <h2>Confronto Giochi </h2>
         <p className="fs-5 text-muted mt-3">Non hai aggiunto alcun gioco al confronto.</p>
-        <NavLink to="/" className="btn btn-primary mt-2">
+        <NavLink to="/" className="btn btn-secondary mt-2">
           Torna alla Home per aggiungere giochi
         </NavLink>
       </div>

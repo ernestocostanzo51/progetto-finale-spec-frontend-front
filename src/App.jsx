@@ -8,14 +8,15 @@ import GameProvider from "./components/GamesProvider"
 import FavoriteProvider from "./components/FavoriteProvider"
 import CompareProvider from "./components/CompareProvider"
 import SearchProvider from "./components/SearchProvider"
-
+import SortProvider from "./components/SortProvider"
 
 function App() {
   
 
   return (
     <>
-    <SearchProvider>
+    <SortProvider>
+<SearchProvider>
        <CompareProvider>
 <FavoriteProvider>
        <GameProvider>
@@ -33,6 +34,8 @@ function App() {
     </FavoriteProvider>
     </CompareProvider>
     </SearchProvider>
+    </SortProvider>
+    
    
     
    
